@@ -31,7 +31,7 @@ function onSearchInput() {
           本周记录<span class="text-12px color-#9ca3af font-normal ml-1">{{ records.length }} 条</span>
         </div>
         <button
-          class="px-2.5 h-26px border-none rounded-6 bg-brand text-white text-12px cursor-pointer"
+          class="px-2.5 h-26px inline-flex items-center border-none bg-brand text-white text-12px cursor-pointer"
           @click="emit('create')"
         ><span class="i-mdi-plus text-16px mr-1 -ml-0.5"></span>新建记录</button>
       </div>

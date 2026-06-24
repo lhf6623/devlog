@@ -119,7 +119,7 @@ function closeContextMenu() {
           @keyup.enter="handleAddCategory"
         />
         <button
-          class="flex-shrink-0 px-1.5 border-none rounded-6 bg-brand text-white text-14px cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          class="flex-shrink-0 inline-flex items-center px-1.5 border-none bg-brand text-white text-14px cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           :disabled="!newCategoryName.trim()"
           @click="handleAddCategory"
         ><span class="i-mdi-plus text-16px"></span></button>
@@ -134,7 +134,7 @@ function closeContextMenu() {
         :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }"
       >
         <button
-          class="w-full text-left px-3 py-1.5 text-13px color-#ef4444 bg-transparent border-none cursor-pointer hover:bg-#fef2f2"
+          class="w-full inline-flex items-center px-3 py-1.5 text-13px color-#ef4444 bg-transparent border-none cursor-pointer hover:bg-#fef2f2"
           @click="handleDeleteCategory"
         >删除类别</button>
       </div>

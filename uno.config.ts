@@ -2,7 +2,10 @@ import { defineConfig,presetMini, presetAttributify, presetIcons } from "unocss"
 
 export default defineConfig({
   presets: [presetMini(), presetAttributify(), presetIcons({
-    
+      extraProperties: {
+        'display': 'inline-block',
+        'vertical-align': 'middle',
+      },
   })],
   theme: {
     colors: {
@@ -15,7 +18,7 @@ export default defineConfig({
   },
   shortcuts: {
     "sidebar-btn":
-      "w-full flex items-center justify-between px-2 py-1.5 rounded-7 text-13px color-#4b5563 bg-transparent border-none cursor-pointer transition-all-150 hover:bg-#f2f0f8 hover:color-#1f1f1f",
+      "w-full flex items-center justify-between px-2 py-1.5 text-13px color-#4b5563 bg-transparent border-none cursor-pointer transition-all-150 hover:bg-#f2f0f8 hover:color-#1f1f1f",
     "sidebar-btn-active":
       "bg-#ede9fe color-#6d5dfc font-500",
     "status-badge":

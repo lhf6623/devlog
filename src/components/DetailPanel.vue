@@ -156,12 +156,12 @@ watch([activeTab, () => props.record?.content], async () => {
     <!-- Tab 栏 -->
     <div class="flex gap-1 px-6 pt-3 pb-0 border-b border-#f0f0f2">
       <button
-        :class="['px-4 py-1.5 rounded-t-8 text-13px bg-transparent border-none cursor-pointer transition-all-150',
+        :class="['px-4 py-1.5 inline-flex items-center text-13px bg-transparent border-none cursor-pointer transition-all-150',
                  activeTab === 'edit' ? 'color-brand font-500 border-b-2 border-brand' : 'color-#6b7280 hover:color-#1f1f1f hover:bg-warm']"
         @click="activeTab = 'edit'"
       >编辑</button>
       <button
-        :class="['px-4 py-1.5 rounded-t-8 text-13px bg-transparent border-none cursor-pointer transition-all-150',
+        :class="['px-4 py-1.5 inline-flex items-center text-13px bg-transparent border-none cursor-pointer transition-all-150',
                  activeTab === 'preview' ? 'color-brand font-500 border-b-2 border-brand' : 'color-#6b7280 hover:color-#1f1f1f hover:bg-warm']"
         @click="activeTab = 'preview'"
       >预览</button>
@@ -188,11 +188,11 @@ watch([activeTab, () => props.record?.content], async () => {
       <div class="flex items-center gap-2.5">
         <span class="save-status" :style="{ color: saveStatus === '已保存' ? '#22c55e' : '#9ca3af' }">{{ saveStatus }}</span>
         <button
-          class="px-2 py-1.25 rounded-6 text-13px cursor-pointer border bg-white color-#ef4444 border-#fecaca hover:bg-#fef2f2"
+          class="px-2 py-1.25 inline-flex items-center text-13px cursor-pointer border bg-white color-#ef4444 border-#fecaca hover:bg-#fef2f2"
           @click="handleDelete"
         ><span class="i-mdi-delete-outline text-16px"></span></button>
         <button
-          class="px-2 py-1.25 rounded-6 text-13px cursor-pointer border-none bg-brand text-white hover:bg-brand-hover"
+          class="px-2 py-1.25 inline-flex items-center text-13px cursor-pointer border-none bg-brand text-white hover:bg-brand-hover"
           @click="handleSave"
         ><span class="i-mdi-content-save-outline text-16px"></span></button>
       </div>
