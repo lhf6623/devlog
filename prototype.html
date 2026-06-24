@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevLog 工作记录原型</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f8f7fa;
+      color: #1f1f1f;
+      overflow: hidden;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* 左侧边栏 */
+    .sidebar {
+      width: 168px;
+      flex-shrink: 0;
+      background: #f8f7fa;
+      border-right: 1px solid #edeef3;
+      display: flex;
+      flex-direction: column;
+    }
+    .brand {
+      padding: 20px 16px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #6d5dfc;
+    }
+    .brand-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1f1f1f;
+    }
+    .menu {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 10px 16px;
+    }
+    .section-title {
+      font-size: 11px;
+      color: #9ca3af;
+      font-weight: 500;
+      padding: 16px 8px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .menu-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 8px;
+      border-radius: 7px;
+      font-size: 13px;
+      color: #4b5563;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .menu-item:hover {
+      background: #f2f0f8;
+      color: #1f1f1f;
+    }
+    .menu-item.active {
+      background: #ede9fe;
+      color: #6d5dfc;
+      font-weight: 500;
+    }
+    .menu-item .count {
+      font-size: 11px;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+    .menu-item.active .count { color: #6d5dfc; opacity: 0.8; }
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .add-category {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 0 8px;
+    }
+    .add-category input {
+      flex: 1;
+      padding: 5px 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 12px;
+      outline: none;
+    }
+    .add-category input:focus { border-color: #6d5dfc; }
+    .add-category button {
+      padding: 0 8px;
+      border: none;
+      border-radius: 6px;
+      background: #6d5dfc;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .add-category button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* 列表 */
+    .list-panel {
+      width: 320px;
+      flex-shrink: 0;
+      background: #f8f7fa;
+      border-right: 1px solid #edeef3;
+      display: flex;
+      flex-direction: column;
+    }
+    .list-header {
+      padding: 16px 16px 0;
+    }
+    .list-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .list-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1f1f1f;
+    }
+    .list-count {
+      font-size: 12px;
+      color: #9ca3af;
+      font-weight: normal;
+      margin-left: 4px;
+    }
+    .new-btn {
+      padding: 0 10px;
+      height: 26px;
+      border: none;
+      border-radius: 6px;
+      background: #6d5dfc;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .search-box {
+      padding: 0 16px 12px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+    .search-box input:focus { border-color: #6d5dfc; }
+    .record-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 12px 12px;
+    }
+    .record-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .record-card:hover {
+      box-shadow: 0 4px 12px rgba(109,93,252,0.08);
+      border-color: #e0dcfa;
+      transform: translateY(-1px);
+    }
+    .record-card.active {
+      border-color: #6d5dfc;
+      box-shadow: 0 4px 16px rgba(109,93,252,0.12);
+    }
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1f1f1f;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+    .card-date {
+      font-size: 11px;
+      color: #9ca3af;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+    .card-preview {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+      margin: 0 0 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .card-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+    .status-pending { background: #fff7ed; color: #c2410c; }
+    .status-in-progress { background: #eef2ff; color: #4f46e5; }
+    .status-completed { background: #f0fdf4; color: #15803d; }
+    .status-archived { background: #f3f4f6; color: #6b7280; }
+    .category-tag {
+      font-size: 11px;
+      color: #6d5dfc;
+      background: #f4f3ff;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .empty {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 13px;
+      margin-top: 60px;
+    }
+
+    /* 详情 */
+    .detail-panel {
+      flex: 1;
+      min-width: 0;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+    .detail-empty {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+    .detail-header {
+      padding: 20px 24px 12px;
+      border-bottom: 1px solid #f0f0f2;
+    }
+    .title-input {
+      width: 100%;
+      border: none;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1f1f1f;
+      outline: none;
+      padding: 0;
+      margin-bottom: 14px;
+      background: transparent;
+    }
+    .title-input::placeholder { color: #d1d5db; }
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .meta-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .meta-label {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    .meta-value {
+      font-size: 13px;
+      color: #4b5563;
+      background: #f3f4f6;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    select.meta-select, .meta-select {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      color: #4b5563;
+      outline: none;
+      background: #fff;
+      min-width: 90px;
+    }
+    select.meta-select:focus { border-color: #6d5dfc; }
+
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      padding: 12px 24px 0;
+      border-bottom: 1px solid #f0f0f2;
+    }
+    .tab-btn {
+      padding: 6px 16px;
+      border-radius: 8px 8px 0 0;
+      font-size: 13px;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover { color: #1f1f1f; background: #f8f7fa; }
+    .tab-btn.active {
+      color: #6d5dfc;
+      font-weight: 500;
+      border-bottom: 2px solid #6d5dfc;
+    }
+
+    .detail-body {
+      flex: 1;
+      overflow-y: auto;
+    }
+    .editor-pane {
+      padding: 16px 24px;
+      height: 100%;
+    }
+    .content-textarea {
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+      border: none;
+      outline: none;
+      resize: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #374151;
+      background: transparent;
+    }
+    .preview-pane {
+      padding: 24px;
+      max-width: 760px;
+      line-height: 1.7;
+    }
+    .preview-pane h1, .preview-pane h2, .preview-pane h3,
+    .preview-pane h4, .preview-pane h5, .preview-pane h6 {
+      color: #1f1f1f;
+      font-weight: 600;
+      margin: 1.25rem 0 0.75rem;
+      line-height: 1.25;
+    }
+    .preview-pane h1 { font-size: 1.5rem; }
+    .preview-pane h2 { font-size: 1.25rem; }
+    .preview-pane h3 { font-size: 1.125rem; }
+    .preview-pane p { color: #4b5563; margin-bottom: 0.75rem; }
+    .preview-pane ul, .preview-pane ol { color: #4b5563; padding-left: 1.25rem; }
+    .preview-pane li { margin-bottom: 0.25rem; }
+    .preview-pane pre { background: #f8f7fa; padding: 0.75rem; border-radius: 0.5rem; overflow-x: auto; }
+    .preview-pane code { background: #f8f7fa; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.75rem; }
+    .preview-pane blockquote { border-left: 3px solid #e5e7eb; padding-left: 0.75rem; color: #6b7280; }
+
+    .detail-footer {
+      padding: 10px 24px;
+      border-top: 1px solid #f0f0f2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fafafa;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .save-btn, .delete-btn {
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+    }
+    .save-btn { background: #6d5dfc; color: #fff; }
+    .save-btn:hover { background: #5b4cdb; }
+    .delete-btn { background: #fff; color: #ef4444; border: 1px solid #fecaca; }
+    .delete-btn:hover { background: #fef2f2; }
+    .save-status { color: #22c55e; margin-right: 4px; }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- 左侧边栏 -->
+    <nav class="sidebar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span class="brand-title">工作记录</span>
+      </div>
+      <div class="menu">
+        <div class="section-title">时间</div>
+        <div id="timeMenu"></div>
+        <div class="section-title">状态</div>
+        <div id="statusMenu"></div>
+        <div class="section-title">类别</div>
+        <div id="categoryMenu"></div>
+        <div class="add-category">
+          <input id="newCategoryInput" type="text" placeholder="新增类别" />
+          <button id="addCategoryBtn" disabled>+</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 列表 -->
+    <div class="list-panel">
+      <div class="list-header">
+        <div class="list-title-row">
+          <div class="list-title">本周记录<span class="list-count" id="recordCount">5 条</span></div>
+          <button class="new-btn" id="newRecordBtn">+ 新建记录</button>
+        </div>
+      </div>
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="搜索标题、内容或类别" />
+      </div>
+      <div class="record-list" id="recordList"></div>
+    </div>
+
+    <!-- 详情 -->
+    <div class="detail-panel" id="detailPanel">
+      <div class="detail-empty">选择或新建一条记录</div>
+    </div>
+  </div>
+
+  <script>
+    const STATUS = {
+      pending: { label: '待处理', class: 'status-pending', color: '#f59e0b' },
+      in_progress: { label: '进行中', class: 'status-in-progress', color: '#6366f1' },
+      completed: { label: '本周完成', class: 'status-completed', color: '#22c55e' },
+      archived: { label: '已归档', class: 'status-archived', color: '#9ca3af' },
+    };
+    const TIME_LABELS = { this_week: '本周', last_week: '上周', earlier: '更早', all: '全部' };
+
+    const categories = ['后端对接', '产品需求', '会议记录'];
+    let records = [
+      { id: '1', title: '订单详情页新增退款入口', content: '## 背景\n\n老张说订单详情页需要在操作区加一个退款入口，目前只有"申请售后"按钮，用户路径太长。\n\n## 方案\n\n入口放在订单状态为"已支付 / 已发货"时显示，点击后弹出退款原因选择框，提交后调用 `/api/refund/create`。\n\n## 待确认\n\n- 退款是否需要原路返回？还是仅支持退回余额？\n- 已发货状态下是否需要先填写物流单号？\n\n## 进度\n\n6/23 UI 已画完，等接口文档。', status: 'in_progress', category: '后端对接', updatedAt: '2026-06-24 10:00' },
+      { id: '2', title: '用户列表导出 Excel 功能', content: '产品提出需要导出用户列表为 Excel，字段包括用户名、手机号、注册时间、状态。', status: 'pending', category: '产品需求', updatedAt: '2026-06-23 16:30' },
+      { id: '3', title: '首页 Banner 自动轮播逻辑调整', content: '会议讨论后决定：Banner 轮播间隔从 3s 改为 5s，暂停时保留当前帧。', status: 'completed', category: '会议记录', updatedAt: '2026-06-23 14:20' },
+      { id: '4', title: '登录页密码强度校验', content: '后端接口要求密码长度至少 8 位，且包含字母和数字。', status: 'in_progress', category: '后端对接', updatedAt: '2026-06-22 18:00' },
+      { id: '5', title: '评论功能接口联调时间确认', content: '和后端确认联调时间：6/25 周四下午。', status: 'pending', category: '后端对接', updatedAt: '2026-06-22 11:00' },
+    ];
+
+    let activeFilter = { type: 'time', value: 'this_week' };
+    let selectedId = records[0].id;
+    let activeTab = 'edit';
+    let searchKeyword = '';
+    let saveStatus = '';
+    let saveStatusTimer = null;
+
+    function renderMenu() {
+      const timeCounts = { this_week: 0, last_week: 0, earlier: 0, all: 0 };
+      const statusCounts = { pending: 0, in_progress: 0, completed: 0, archived: 0 };
+      const categoryCounts = {};
+      categories.forEach(c => categoryCounts[c] = 0);
+      records.forEach(r => {
+        statusCounts[r.status]++;
+        categoryCounts[r.category] = (categoryCounts[r.category] || 0) + 1;
+        timeCounts.all++;
+        timeCounts.this_week++;
+      });
+
+      document.getElementById('timeMenu').innerHTML = Object.keys(TIME_LABELS).map(k =>
+        `<button class="menu-item ${activeFilter.type === 'time' && activeFilter.value === k ? 'active' : ''}" data-type="time" data-value="${k}">` +
+          `<span>${TIME_LABELS[k]}</span>` +
+          `<span class="count">${timeCounts[k] || 0}</span>` +
+        `</button>`
+      ).join('');
+
+      document.getElementById('statusMenu').innerHTML = Object.keys(STATUS).map(k =>
+        `<button class="menu-item ${activeFilter.type === 'status' && activeFilter.value === k ? 'active' : ''}" data-type="status" data-value="${k}">` +
+          `<span><span class="status-dot" style="background:${STATUS[k].color}"></span>${STATUS[k].label}</span>` +
+          `<span class="count">${statusCounts[k] || 0}</span>` +
+        `</button>`
+      ).join('');
+
+      document.getElementById('categoryMenu').innerHTML = categories.map(c =>
+        `<button class="menu-item ${activeFilter.type === 'category' && activeFilter.value === c ? 'active' : ''}" data-type="category" data-value="${c}">` +
+          `<span class="truncate">${c}</span>` +
+          `<span class="count">${categoryCounts[c] || 0}</span>` +
+        `</button>`
+      ).join('');
+    }
+
+    function filteredRecords() {
+      let list = records.filter(r => {
+        if (searchKeyword) {
+          const kw = searchKeyword.toLowerCase();
+          return r.title.toLowerCase().includes(kw) || r.content.toLowerCase().includes(kw) || r.category.toLowerCase().includes(kw);
+        }
+        if (activeFilter.type === 'status') return r.status === activeFilter.value;
+        if (activeFilter.type === 'category') return r.category === activeFilter.value;
+        return true;
+      });
+      return list.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    }
+
+    function renderList() {
+      const list = filteredRecords();
+      document.getElementById('recordCount').textContent = `${list.length} 条`;
+      const container = document.getElementById('recordList');
+      if (list.length === 0) {
+        container.innerHTML = '<div class="empty">没有符合条件的记录</div>';
+        return;
+      }
+      container.innerHTML = list.map(r => {
+        const s = STATUS[r.status];
+        const preview = r.content.trim().split('\n')[0].replace(/^#+\s*/, '').slice(0, 60) || '暂无内容';
+        return `<div class="record-card ${r.id === selectedId ? 'active' : ''}" data-id="${r.id}">` +
+          `<div class="card-top"><h3 class="card-title">${r.title || '无标题'}</h3><span class="card-date">${r.updatedAt}</span></div>` +
+          `<p class="card-preview">${preview}</p>` +
+          `<div class="card-tags">` +
+            `<span class="status-badge ${s.class}"><span class="status-dot" style="background:${s.color}"></span>${s.label}</span>` +
+            `${r.category ? `<span class="category-tag">${r.category}</span>` : ''}` +
+          `</div>` +
+        `</div>`;
+      }).join('');
+    }
+
+    function renderDetail() {
+      const r = records.find(x => x.id === selectedId);
+      const panel = document.getElementById('detailPanel');
+      if (!r) {
+        panel.innerHTML = '<div class="detail-empty">选择或新建一条记录</div>';
+        return;
+      }
+      const s = STATUS[r.status];
+      panel.innerHTML = `
+        <div class="detail-header">
+          <input class="title-input" id="titleInput" value="${escapeHtml(r.title)}" placeholder="输入标题" />
+          <div class="meta-row">
+            <div class="meta-group">
+              <span class="meta-label">状态</span>
+              <span class="status-badge ${s.class}"><span class="status-dot" style="background:${s.color}"></span>${s.label}</span>
+              <select class="meta-select" id="statusSelect">
+                ${Object.keys(STATUS).map(k => `<option value="${k}" ${k === r.status ? 'selected' : ''}>${STATUS[k].label}</option>`).join('')}
+              </select>
+            </div>
+            <div class="meta-group">
+              <span class="meta-label">类别</span>
+              <select class="meta-select" id="categorySelect">
+                <option value="">未分类</option>
+                ${categories.map(c => `<option value="${c}" ${c === r.category ? 'selected' : ''}>${c}</option>`).join('')}
+              </select>
+            </div>
+            <div class="meta-group">
+              <span class="meta-label">创建</span>
+              <span class="meta-value">6/24</span>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <button class="tab-btn ${activeTab === 'edit' ? 'active' : ''}" data-tab="edit">编辑</button>
+          <button class="tab-btn ${activeTab === 'preview' ? 'active' : ''}" data-tab="preview">预览</button>
+        </div>
+        <div class="detail-body">
+          ${activeTab === 'edit'
+            ? `<div class="editor-pane"><textarea class="content-textarea" id="contentInput" placeholder="在这里记录详细内容...">${escapeHtml(r.content)}</textarea></div>`
+            : `<div class="preview-pane" id="previewPane"></div>`
+          }
+        </div>
+        <div class="detail-footer">
+          <span>创建于 6/24 · 更新于 ${r.updatedAt}</span>
+          <div class="footer-actions">
+            <span class="save-status" id="saveStatus">${saveStatus}</span>
+            <button class="delete-btn" id="deleteBtn">删除</button>
+            <button class="save-btn" id="saveBtn">保存</button>
+          </div>
+        </div>
+      `;
+
+      if (activeTab === 'preview') {
+        document.getElementById('previewPane').innerHTML = markdownToHtml(r.content);
+      }
+      bindDetailEvents(r.id);
+    }
+
+    function bindDetailEvents(id) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeTab = btn.dataset.tab;
+          renderDetail();
+        });
+      });
+      document.getElementById('statusSelect')?.addEventListener('change', e => updateRecord(id, { status: e.target.value }));
+      document.getElementById('categorySelect')?.addEventListener('change', e => updateRecord(id, { category: e.target.value }));
+      let titleBlurTimer = null;
+      document.getElementById('titleInput')?.addEventListener('input', e => {
+        clearTimeout(titleBlurTimer);
+        titleBlurTimer = setTimeout(() => updateRecord(id, { title: e.target.value }), 600);
+      });
+      let contentTimer = null;
+      document.getElementById('contentInput')?.addEventListener('input', e => {
+        clearTimeout(contentTimer);
+        contentTimer = setTimeout(() => updateRecord(id, { content: e.target.value }), 800);
+      });
+      document.getElementById('saveBtn')?.addEventListener('click', () => {
+        const title = document.getElementById('titleInput').value;
+        const content = document.getElementById('contentInput').value;
+        updateRecord(id, { title, content });
+      });
+      document.getElementById('deleteBtn')?.addEventListener('click', () => {
+        if (confirm('确定删除这条记录吗？')) {
+          records = records.filter(r => r.id !== id);
+          selectedId = records.length ? records[0].id : null;
+          renderAll();
+        }
+      });
+    }
+
+    function updateRecord(id, changes) {
+      const r = records.find(x => x.id === id);
+      if (!r) return;
+      Object.assign(r, changes);
+      r.updatedAt = nowTime();
+      setSaveStatus('保存中…');
+      setTimeout(() => setSaveStatus('已保存'), 300);
+      renderList();
+      renderMenu();
+    }
+
+    function setSaveStatus(text) {
+      saveStatus = text;
+      const el = document.getElementById('saveStatus');
+      if (el) el.textContent = text;
+      clearTimeout(saveStatusTimer);
+      saveStatusTimer = setTimeout(() => {
+        saveStatus = '';
+        const el = document.getElementById('saveStatus');
+        if (el) el.textContent = '';
+      }, 2000);
+    }
+
+    function nowTime() {
+      const d = new Date();
+      return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function markdownToHtml(md) {
+      return md
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*)\*/gim, '<em>$1</em>')
+        .replace(/`([^`]+)`/gim, '<code>$1</code>')
+        .replace(/^\- (.*$)/gim, '<li>$1</li>')
+        .replace(/<li>(.*)<\/li>/gim, '<ul><li>$1</li></ul>')
+        .replace(/\n/gim, '<br />');
+    }
+
+    function renderAll() {
+      renderMenu();
+      renderList();
+      renderDetail();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAll();
+
+      document.getElementById('timeMenu').addEventListener('click', handleMenuClick);
+      document.getElementById('statusMenu').addEventListener('click', handleMenuClick);
+      document.getElementById('categoryMenu').addEventListener('click', handleMenuClick);
+
+      document.getElementById('recordList').addEventListener('click', e => {
+        const card = e.target.closest('.record-card');
+        if (card) {
+          selectedId = card.dataset.id;
+          activeTab = 'edit';
+          renderAll();
+        }
+      });
+
+      document.getElementById('searchInput').addEventListener('input', e => {
+        searchKeyword = e.target.value;
+        renderList();
+      });
+
+      document.getElementById('newRecordBtn').addEventListener('click', () => {
+        const id = String(Date.now());
+        records.unshift({ id, title: '', content: '', status: 'pending', category: '', updatedAt: nowTime() });
+        selectedId = id;
+        activeTab = 'edit';
+        renderAll();
+      });
+
+      const catInput = document.getElementById('newCategoryInput');
+      const catBtn = document.getElementById('addCategoryBtn');
+      catInput.addEventListener('input', () => catBtn.disabled = !catInput.value.trim());
+      catBtn.addEventListener('click', () => {
+        const name = catInput.value.trim();
+        if (name && !categories.includes(name)) {
+          categories.push(name);
+          catInput.value = '';
+          catBtn.disabled = true;
+          renderAll();
+        }
+      });
+    });
+
+    function handleMenuClick(e) {
+      const btn = e.target.closest('.menu-item');
+      if (!btn) return;
+      activeFilter = { type: btn.dataset.type, value: btn.dataset.value };
+      searchKeyword = '';
+      document.getElementById('searchInput').value = '';
+      renderAll();
+    }
+  </script>
+</body>
+</html>
