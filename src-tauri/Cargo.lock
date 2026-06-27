@@ -695,6 +695,7 @@ dependencies = [
 name = "devlog"
 version = "0.1.0"
 dependencies = [
+ "dirs",
  "serde",
  "serde_json",
  "tauri",
